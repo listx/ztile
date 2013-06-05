@@ -35,7 +35,21 @@ data PlaneGeom = PlaneGeom
 	, pgSizeX :: Int
 	, pgSizeY :: Int
 	, pgTiles :: [Coord]
-	} deriving (Eq, Show)
+	} deriving (Eq)
+
+instance Show PlaneGeom where
+	show pg@PlaneGeom{..}
+		= "pgPlane = " ++ show pgPlane ++ "\n"
+		++ "pgSizeX = " ++ show pgSizeX ++ "\n"
+		++ "pgSizeY = " ++ show pgSizeY ++ "\n"
+		++ "pgTiles =\n" ++ showPlaneGeom
+		where
+		showPlaneGeom = intercalate "\n" . map showPGRow $ reverse [0..(pgSizeY - 1)]
+		showPGRow yIdx = indent ++ (intersperse ' ' $ map (\_ -> 'x') [0..(pgSizeX - 1)])
+			where
+			indent = if even yIdx
+				then " "
+				else ""
 
 instance ZTile PlaneGeom where
 	indices = pgTiles
@@ -124,6 +138,11 @@ flatHexInit x y
 		, pgTiles = buildHexes x y
 		}
 
+-- E.g., for a size x=4 and y=3, we get:
+--
+--  x x x x
+-- x x x x		<- row 1, an odd row, so we shift the tiles left by 1 unit
+--  x x x x		<- row 0
 buildHexes :: Int -> Int -> [Coord]
 buildHexes xWidth yHeight = snd $ foldl step (0, []) ys
 	where
