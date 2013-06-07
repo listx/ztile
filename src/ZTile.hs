@@ -22,6 +22,8 @@ class ZTile a where
 	-- diagonal directions
 	adjacent' :: a -> Coord -> [Coord]
 	distance :: a -> Coord -> Coord -> Int
+	contains :: a -> Coord -> Bool
+	size :: a -> (Int, Int)
 
 data Plane
 	= FlatSq
@@ -91,6 +93,8 @@ instance ZTile PlaneGeom where
 			where
 			z2 = (-x2) - y2
 			z1 = (-x1) - y1
+	contains PlaneGeom{..} = flip elem pgTiles
+	size PlaneGeom{..} = (pgSizeX, pgSizeY)
 
 go :: Coord -> Direction -> Coord
 go (x, y) d = case d of
