@@ -159,3 +159,8 @@ buildHexes xWidth yHeight = snd $ foldl step (0, []) ys
 		x' = if mod y 2 == 1
 			then x - 1
 			else x
+
+flatPlaneInit :: Plane -> Int -> Int -> PlaneGeom
+flatPlaneInit p = case p of
+	FlatSq -> flatSqInit
+	FlatHex -> flatHexInit
