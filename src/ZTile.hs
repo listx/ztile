@@ -164,3 +164,8 @@ flatPlaneInit :: Plane -> Int -> Int -> PlaneGeom
 flatPlaneInit p = case p of
 	FlatSq -> flatSqInit
 	FlatHex -> flatHexInit
+
+genIndices :: Plane -> Int -> Int -> [Coord]
+genIndices p x y = case p of
+	FlatSq -> pgTiles $ flatSqInit x y
+	FlatHex -> pgTiles $ flatHexInit x y
