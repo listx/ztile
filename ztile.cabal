@@ -1,0 +1,17 @@
+Name:                ztile
+Version:             0.0
+Description:         Square and Hex tiles for games.
+License:             AllRightsReserved
+License-file:        LICENSE
+Author:              Linus Arver
+Maintainer:          linusarver@gmail.com
+Build-Type:          Simple
+Cabal-Version:       >=1.2
+
+library
+  Hs-source-dirs: src
+  Ghc-options: -threaded -Wall
+  Build-Depends: base >= 3
+  Exposed-Modules:
+    ZTile
+    ZTile.PathFinding
