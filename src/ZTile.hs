@@ -40,7 +40,7 @@ data PlaneGeom = PlaneGeom
 	} deriving (Eq)
 
 instance Show PlaneGeom where
-	show pg@PlaneGeom{..}
+	show PlaneGeom{..}
 		= "pgPlane = " ++ show pgPlane ++ "\n"
 		++ "pgSizeX = " ++ show pgSizeX ++ "\n"
 		++ "pgSizeY = " ++ show pgSizeY ++ "\n"
