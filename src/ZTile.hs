@@ -41,10 +41,10 @@ data PlaneGeom = PlaneGeom
 
 instance Show PlaneGeom where
 	show PlaneGeom{..}
-		= "pgPlane = " ++ show pgPlane ++ "\n"
-		++ "pgSizeX = " ++ show pgSizeX ++ "\n"
-		++ "pgSizeY = " ++ show pgSizeY ++ "\n"
-		++ "pgTiles =\n" ++ showPlaneGeom
+		= "PlaneGeom { pgPlane = " ++ show pgPlane ++ ",\n"
+		++ "pgSizeX = " ++ show pgSizeX ++ ",\n"
+		++ "pgSizeY = " ++ show pgSizeY ++ ",\n"
+		++ "pgTiles =\n" ++ showPlaneGeom ++ "\n}"
 		where
 		showPlaneGeom = intercalate "\n" . map showPGRow $ reverse [0..(pgSizeY - 1)]
 		showPGRow yIdx = indent ++ (intersperse ' ' $ map (\_ -> 'x') [0..(pgSizeX - 1)])
