@@ -49,7 +49,7 @@ instance Show PlaneGeom where
 		showPlaneGeom = intercalate "\n" . map showPGRow $ reverse [0..(pgSizeY - 1)]
 		showPGRow yIdx = indent ++ (intersperse ' ' $ map (\_ -> 'x') [0..(pgSizeX - 1)])
 			where
-			indent = if even yIdx
+			indent = if odd yIdx
 				then " "
 				else ""
 
@@ -144,8 +144,8 @@ flatHexInit x y
 
 -- E.g., for a size x=4 and y=3, we get:
 --
---  x x x x
--- x x x x		<- row 1, an odd row, so we shift the tiles left by 1 unit
+--  x x x x		<- row 2, an even row, so we shift the tiles left by 1 unit
+--   x x x x
 --  x x x x		<- row 0
 buildHexes :: Int -> Int -> [Coord]
 buildHexes xWidth yHeight = snd $ foldl step (0, []) ys
@@ -155,8 +155,8 @@ buildHexes xWidth yHeight = snd $ foldl step (0, []) ys
 		where
 		xs = [x..(x + (xWidth - 1))]
 		-- If we encounter an odd row, decrement the starting x index for the
-		-- next iteration.
-		x' = if mod y 2 == 1
+		-- next iteration (an even row).
+		x' = if odd y
 			then x - 1
 			else x
 
