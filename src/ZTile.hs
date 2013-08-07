@@ -82,7 +82,7 @@ instance ZTile PlaneGeom where
 			, [DYMinus, DXPlus]
 			]
 		FlatHex -> adjacent pg idx
-	-- Distance between two squares along the grid, assuming no obstacles.
+	-- Distance between two squares (or hexes) along the grid, assuming no obstacles.
 	distance PlaneGeom{..} (x1, y1) (x2, y2) = case pgPlane of
 		FlatSq -> max (abs $ x2 - x1) (abs $ y2 - y1)
 		FlatHex -> maximum
