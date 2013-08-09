@@ -4,9 +4,9 @@ module ZTile where
 
 import Data.List
 
--- Coord is (X, Y); this can represent both square and hex tiles; for hex tiles,
+-- Vertex is (X, Y); this can represent both square and hex tiles; for hex tiles,
 -- the third axis, Z, can be calculated on the fly using the X and Y values.
-type Coord = (Int, Int)
+type Vertex = (Int, Int)
 
 data Direction
 	= DXPlus
@@ -16,13 +16,13 @@ data Direction
 	deriving (Eq, Show)
 
 class ZTile a where
-	indices :: a -> [Coord]
-	adjacent :: a -> Coord -> [Coord] -- adjacent edge-to-edge adjacent
+	vertices :: a -> [Vertex]
+	adjacent :: a -> Vertex -> [Vertex] -- adjacent edge-to-edge adjacent
 	-- edge/point-to-edge/point; for square tiles, this routine check for the
 	-- diagonal directions
-	adjacent' :: a -> Coord -> [Coord]
-	distance :: a -> Coord -> Coord -> Int
-	contains :: a -> Coord -> Bool
+	adjacent' :: a -> Vertex -> [Vertex]
+	distance :: a -> Vertex -> Vertex -> Int
+	contains :: a -> Vertex -> Bool
 	size :: a -> (Int, Int)
 
 data Plane
@@ -36,7 +36,7 @@ data PlaneGeom = PlaneGeom
 	{ pgPlane :: Plane
 	, pgSizeX :: Int
 	, pgSizeY :: Int
-	, pgTiles :: [Coord]
+	, pgTiles :: [Vertex]
 	} deriving (Eq)
 
 instance Show PlaneGeom where
@@ -54,7 +54,7 @@ instance Show PlaneGeom where
 				else ""
 
 instance ZTile PlaneGeom where
-	indices = pgTiles
+	vertices = pgTiles
 	adjacent PlaneGeom{..} idx = filter (flip elem pgTiles) $ case pgPlane of
 		FlatSq -> map (go idx)
 			[ DXPlus
@@ -96,14 +96,14 @@ instance ZTile PlaneGeom where
 	contains PlaneGeom{..} = flip elem pgTiles
 	size PlaneGeom{..} = (pgSizeX, pgSizeY)
 
-go :: Coord -> Direction -> Coord
+go :: Vertex -> Direction -> Vertex
 go (x, y) d = case d of
 	DYPlus -> (x, y + 1)
 	DYMinus -> (x, y - 1)
 	DXPlus -> (x + 1, y)
 	DXMinus -> (x - 1, y)
 
-go' :: Coord -> [Direction] -> Coord
+go' :: Vertex -> [Direction] -> Vertex
 go' = foldl go
 
 flatSqDefault :: PlaneGeom
@@ -147,7 +147,7 @@ flatHexInit x y
 --  x x x x		<- row 2, an even row, so we shift the tiles left by 1 unit
 --   x x x x
 --  x x x x		<- row 0
-buildHexes :: Int -> Int -> [Coord]
+buildHexes :: Int -> Int -> [Vertex]
 buildHexes xWidth yHeight = snd $ foldl step (0, []) ys
 	where
 	ys = [0..(yHeight - 1)]
@@ -165,7 +165,7 @@ flatPlaneInit p = case p of
 	FlatSq -> flatSqInit
 	FlatHex -> flatHexInit
 
-genIndices :: Plane -> Int -> Int -> [Coord]
-genIndices p x y = case p of
+genVertices :: Plane -> Int -> Int -> [Vertex]
+genVertices p x y = case p of
 	FlatSq -> pgTiles $ flatSqInit x y
 	FlatHex -> pgTiles $ flatHexInit x y
