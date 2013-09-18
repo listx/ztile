@@ -1,3 +1,6 @@
+\chapter{ZTile}
+
+\begin{code}
 {-# LANGUAGE RecordWildCards #-}
 
 module ZTile where
@@ -169,3 +172,4 @@ genVertices :: Plane -> Int -> Int -> [Vertex]
 genVertices p x y = case p of
 	FlatSq -> pgTiles $ flatSqInit x y
 	FlatHex -> pgTiles $ flatHexInit x y
+\end{code}

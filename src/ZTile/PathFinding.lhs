@@ -1,3 +1,5 @@
+\chapter{ZTile/PathFinding}
+\begin{code}
 {-# LANGUAGE RecordWildCards #-}
 
 module ZTile.PathFinding where
@@ -10,3 +12,4 @@ type Weight = Int
 -- is impassable. The greater the positive weight, the greater the movement
 -- penalty for this coordinate.
 type WCoord = (Coord, Weight)
+\end{code}
