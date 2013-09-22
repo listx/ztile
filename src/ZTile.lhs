@@ -65,7 +65,7 @@ instance ZTile PlaneGeom where
 			, DYPlus
 			, DYMinus
 			]
-		FlatHex -> map (go' idx)
+		FlatHex -> map (go idx)
 			[ [DXPlus]
 			, [DXMinus]
 			, [DYPlus]
@@ -74,7 +74,7 @@ instance ZTile PlaneGeom where
 			, [DYMinus, DXPlus]
 			]
 	adjacent' pg@PlaneGeom{..} idx = case pgPlane of
-		FlatSq -> filter (flip elem pgTiles) $ map (go' idx)
+		FlatSq -> filter (flip elem pgTiles) $ map (go idx)
 			[ [DXPlus]
 			, [DXMinus]
 			, [DYPlus]
@@ -99,15 +99,15 @@ instance ZTile PlaneGeom where
 	contains PlaneGeom{..} = flip elem pgTiles
 	size PlaneGeom{..} = (pgSizeX, pgSizeY)
 
-go :: Vertex -> Direction -> Vertex
-go (x, y) d = case d of
-	DYPlus -> (x, y + 1)
-	DYMinus -> (x, y - 1)
-	DXPlus -> (x + 1, y)
-	DXMinus -> (x - 1, y)
-
-go' :: Vertex -> [Direction] -> Vertex
-go' = foldl go
+go :: Vertex -> [Direction] -> Vertex
+go = foldl go'
+	where
+	go' :: Vertex -> Direction -> Vertex
+	go' (x, y) d = case d of
+		DYPlus -> (x, y + 1)
+		DYMinus -> (x, y - 1)
+		DXPlus -> (x + 1, y)
+		DXMinus -> (x - 1, y)
 
 flatSqDefault :: PlaneGeom
 flatSqDefault = flatSqInit 19 19
