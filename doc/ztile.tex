@@ -1,4 +1,4 @@
-\documentclass[letterpaper,twoside,10pt]{report}
+\documentclass[letterpaper,twoside,12pt]{report}
 \usepackage[vmargin=1in,hmargin=1in]{geometry}
 \usepackage[titles]{tocloft}
 
@@ -7,6 +7,9 @@
 % package and other packages to make XeTeX work better; it also loads the
 % 'fontspec' package)
 \usepackage{xltxtra}
+
+% import predefined colors
+\usepackage[x11names]{xcolor}
 
 % shortcut command for footnotes
 \newcommand*\fn[1]{\footnote{#1}}
@@ -19,31 +22,19 @@
 		{\csname lst@SaveFirstLabel\endcsname}
 	\lstset{
 		basicstyle=\small\ttfamily,
+		frame=lines,
+		framexleftmargin=0.5em,
+		framexrightmargin=0.5em,
+		backgroundcolor=\color{LemonChiffon1},
+		showstringspaces=false,
 		flexiblecolumns=false,
-%		basewidth={0.6em,0.55em},
-		literate=
-				{+}{{$+$}}1
-				{/}{{$/$}}1
-				{*}{{$*$}}1
-%				{=}{{$=$}}1
-				{>}{{$>$}}1
-				{<}{{$<$}}1
-%				{\\}{{$\lambda$}}1
-				{\\\\}{{\char`\\\char`\\}}1
-				{->}{{$\rightarrow$}}2
-				{<-}{{$\leftarrow$}}2
-				{>=}{{$\geq$}}2
-				{<=}{{$\leq$}}2
-				{=>}{{$\Rightarrow$}}2
-				{>>}{{>>}}2 {>>=}{{>>=}}2
-				{\ .\ }{{$\circ$}}3
-%				{|}{{$\mid$}}1
     }
 
 \renewcommand*\oldstylenums{\addfontfeature{Numbers={OldStyle}}}
-\setromanfont[Mapping=tex-text,Ligatures=Common]{Linux Libertine O}
+\newcommand*\ct[1]{\texttt{\color{DeepPink3}#1}}
+\setromanfont[Mapping=tex-text,Ligatures=Common]{Charis SIL}
 \setsansfont[Mapping=tex-text,Ligatures=Common,Scale=0.8]{DejaVu Sans Condensed}
-\setmonofont[]{DejaVu Sans Mono}
+\setmonofont[Scale=0.8]{DejaVu Sans Mono}
 
 % intra-document hyperlinks
 \usepackage[colorlinks,linkcolor=blue]{hyperref}
