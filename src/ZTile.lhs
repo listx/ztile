@@ -59,7 +59,7 @@ instance Show PlaneGeom where
 instance ZTile PlaneGeom where
 	vertices = pgTiles
 	adjacent PlaneGeom{..} idx = filter (flip elem pgTiles) $ case pgPlane of
-		FlatSq -> map (go idx)
+		FlatSq -> map (go' idx)
 			[ DXPlus
 			, DXMinus
 			, DYPlus
@@ -101,13 +101,13 @@ instance ZTile PlaneGeom where
 
 go :: Vertex -> [Direction] -> Vertex
 go = foldl go'
-	where
-	go' :: Vertex -> Direction -> Vertex
-	go' (x, y) d = case d of
-		DYPlus -> (x, y + 1)
-		DYMinus -> (x, y - 1)
-		DXPlus -> (x + 1, y)
-		DXMinus -> (x - 1, y)
+
+go' :: Vertex -> Direction -> Vertex
+go' (x, y) d = case d of
+	DYPlus -> (x, y + 1)
+	DYMinus -> (x, y - 1)
+	DXPlus -> (x + 1, y)
+	DXMinus -> (x - 1, y)
 
 flatSqDefault :: PlaneGeom
 flatSqDefault = flatSqInit 19 19
