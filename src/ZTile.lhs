@@ -5,7 +5,7 @@
 
 module ZTile where
 
-import Data.List
+import Data.List (intercalate, intersperse)
 
 -- Vertex is (X, Y); this can represent both square and hex tiles; for hex tiles,
 -- the third axis, Z, can be calculated on the fly using the X and Y values.
