@@ -12,6 +12,7 @@ library
   Hs-source-dirs: src
   Ghc-options: -threaded -Wall
   Build-Depends: base >= 3
+    , utility-ht >= 0.0.9
   Exposed-Modules:
     ZTile
     ZTile.PathFinding
