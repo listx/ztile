@@ -9,7 +9,7 @@
 \usepackage{xltxtra}
 
 % import predefined colors
-\usepackage[x11names]{xcolor}
+\usepackage[table,x11names]{xcolor}
 
 % shortcut command for footnotes
 \newcommand*\fn[1]{\footnote{#1}}
@@ -36,10 +36,19 @@
 \setsansfont[Mapping=tex-text,Ligatures=Common,Scale=0.8]{DejaVu Sans Condensed}
 \setmonofont[Scale=0.8]{DejaVu Sans Mono}
 
+\usepackage{booktabs}
+
 % intra-document hyperlinks
 \usepackage[colorlinks,linkcolor=blue]{hyperref}
 \begin{document}
+\title{ZTile Source Manual}
+\author{Linus Arver}
+\date{\today}
+\maketitle{}
+\tableofcontents{}
 \input{intro.tex}
 \input{../src/ZTile.lhs}
 \input{../src/ZTile/PathFinding.lhs}
+\input{../src/ZTile/Test.lhs}
+\input{../src/ZTile/Util.lhs}
 \end{document}

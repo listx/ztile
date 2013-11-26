@@ -16,21 +16,19 @@ module ZTile.PathFinding where
 import Data.List
 import qualified Data.List.Key as K
 import Data.Map ((!), fromList, fromListWith, adjust, keys, Map)
+import Data.Tuple
 
 import ZTile
-\end{code}
+import ZTile.Util
 
-For pathfinding problems, we are interested in distances (the length of edges) between vertices in a graph.
-The weight can be either \ct{Infinity} for unvisited vertices, or \ct{Finite Int} for visited ones.
-
-\begin{code}
 data Weight
 	= Finite Int
 	| Infinity
 	deriving (Eq, Show)
 \end{code}
 
-Because we need to perform basic math operations on the \ct{Weight} type, we define the \ct{Ord} and \ct{Num} typeclass instances here.
+For pathfinding problems, we are interested in distances (the length of edges) between vertices in a graph.
+The weight can be either \ct{Infinity} for unvisited vertices, or \ct{Finite Int} for visited ones.
 
 \begin{code}
 instance Ord Weight where
@@ -57,43 +55,88 @@ instance Num Weight where
 	fromInteger a = Finite (fromInteger a)
 \end{code}
 
-We define a \ct{WTile} type here for weighted tiles, which could perhaps be used by the user of this package.
-The idea is that each tile will have a weight associated with it, and that moving from tile A to tile B will incur a movement cost that is the interpolation between the weight of A and B divided by 2, or some other scheme.
-It is up to the user to decide how to determine the values of the weights between two tiles, and to generate the \ct{[(a, a, Weight)]} list required to feed to \ct{buildGraph}.
+Because we need to perform basic math operations on the \ct{Weight} type, we define the \ct{Ord} and \ct{Num} typeclass instances here.
 
 \begin{code}
 type TileId = Int
 type WTile = (TileId, Weight)
 \end{code}
 
-\ct{buildGraph} generates the graph structure we will be working with, where each vertex has a list of neighboring vertices.
+We define a \ct{WTile} type here for weighted tiles, which could perhaps be used by the user of this package.
+The idea is that each tile will have a weight associated with it, and that moving from tile A to tile B will incur a movement cost that is the interpolation between the weight of A and B divided by 2, or some other scheme.
+It is up to the user to decide how to determine the values of the weights between two tiles, and to generate the \ct{[(a, a, Weight)]} list required to feed to \ct{buildGraph}.
 
 \begin{code}
-buildGraph :: Ord a => [(a, a, Weight)] -> Map a [(a, Weight)]
-buildGraph graph = fromListWith (++) $ graph
-	>>= \(a, b, w) -> [(a, [(b, w)]), (b, [(a, w)])]
+buildGraph :: Ord a
+	=> [(a, a, Weight)]
+	-> Either (String, [(a, a)]) (Map a [(a, Weight)])
+buildGraph edges
+	| length es /= length (nub es)
+		= Left ("duplicate edge weight definitions", es \\ (nub es))
+	| any (<0) ws
+		= Left
+			( "negative weights detected"
+			, map getEdge $ filter ((<0) . getWeight) edges
+			)
+	| otherwise = Right . fromListWith (++) $ edges
+	>>= (\(a, b, w) -> [(a, [(b, w)]), (b, [(a, w)])])
+	where
+	getEdge = fstSnd3
+	getWeight = thd3
+	es = map getEdge edges
+	ws = map getWeight edges
+\end{code}
+
+\ct{buildGraph} generates the graph structure we will be working with, where each vertex has a list of neighboring vertices.
+We also first check if the given list of edges makes sense, in that
+	\begin{itemize}
+	\item it does not contain any duplicate edge definitions, and
+	\item it does not contain any negative weights (because Dijkstra's algorithm cannot handle negative weights).
+	\end{itemize}
+
+\begin{code}
+dijkstra :: Ord a => Map a [(a, Weight)] -> a -> Map a (Weight, Maybe a)
+dijkstra graph source = dijkstra' graph wverts verts
+	where
+	verts = keys graph
+	wverts = fromList $ map setVertex verts
+	setVertex v =
+		( v
+		, (if v == source then Finite 0 else Infinity, Nothing)
+		)
 \end{code}
 
 Dijkstra's algorithm.
+The return type is another \ct{Map} type, where each vertex has a final weight (i.e., distance) associated with it (the shortest distance from the source vertex), as well as a \ct{Maybe a} type, which holds the previous vertex traveled to reach this vertex from the source.
+Unreachable vertices will have the value \ct{(Infinity, Nothing)}.
 
 \begin{code}
-dijkstra :: Ord a => a -> Map a [(a, Weight)] -> Map a (Weight, Maybe a)
-dijkstra source graph = f
-	(fromList [(v, (if v == source then Finite 0 else Infinity, Nothing))
-		| v <- keys graph]) $ keys graph
+dijkstra' :: Ord a
+	=> Map a [(a, Weight)]
+	-> Map a (Weight, Maybe a)
+	-> [a]
+	-> Map a (Weight, Maybe a)
+dijkstra' graph finished [] = finished
+dijkstra' graph finished unvisited
+	= dijkstra' graph (foldl' readjust finished uNeighbors)
+	$ delete u unvisited
 	where
-	f ds [] = ds
-	f ds q = f (foldr relax ds $ graph ! m) $ delete m q
-		where
-		m = K.minimum (fst . (ds !)) q
-		relax (e, d) = adjust (min (fst (ds ! m) + d, Just m)) e
+	u = K.minimum (fst . (finished !)) unvisited
+	uNeighbors = graph ! u
+	neighborWeight = fst (finished ! u)
+	readjust vxmap (neighbor, weight)
+		= adjust (min (weight + neighborWeight, Just u)) neighbor vxmap
 \end{code}
 
-To retrieve the shortest path, we simply reverse our direction from the destination.
+We examine one unvisited vertex at a time, until the set of all unvisited vertices becomes empty (at every iteration, we call \ct{delete} to remove the minimum-distance vertex \ct{u} from it).
+\ct{K.minimum} has type \ct{minimum :: Ord b => (a -> b) -> [a] -> a}.
+That is, \ct{u} is the vertex with the shortest distance to the source that is in the unvisited set.
 
 \begin{code}
 shortestPath :: Ord a => a -> a -> Map a [(a, Weight)] -> [a]
 shortestPath source dest graph = reverse $ f dest
 	where
-	f x = x : maybe [] f (snd $ dijkstra source graph ! x)
+	f x = x : maybe [] f (snd $ dijkstra graph source ! x)
 \end{code}
+
+To retrieve the shortest path, we simply reverse our direction from the destination.
