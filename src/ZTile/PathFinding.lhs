@@ -16,9 +16,7 @@ module ZTile.PathFinding where
 import Data.List
 import qualified Data.List.Key as K
 import Data.Map ((!), fromList, fromListWith, adjust, keys, Map, notMember)
-import Data.Tuple
 
-import ZTile
 import ZTile.Util
 
 data Weight
@@ -39,11 +37,11 @@ instance Ord Weight where
 
 instance Num Weight where
 	Finite a + Finite b = Finite (a + b)
-	Finite a + _ = Infinity
+	Finite _ + _ = Infinity
 	Infinity + _ = Infinity
 
 	Finite a * Finite b = Finite (a * b)
-	Finite a * _ = Infinity
+	Finite _ * _ = Infinity
 	Infinity * _ = Infinity
 
 	abs (Finite a) = Finite (abs a)
@@ -117,7 +115,7 @@ dijkstra' :: Ord a
 	-> Map a (Weight, Maybe a)
 	-> [a]
 	-> Map a (Weight, Maybe a)
-dijkstra' graph finished [] = finished
+dijkstra' _ finished [] = finished
 dijkstra' graph finished unvisited
 	= dijkstra' graph (foldl' readjust finished uNeighbors)
 	$ delete u unvisited
