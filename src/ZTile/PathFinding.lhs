@@ -15,7 +15,7 @@ module ZTile.PathFinding where
 
 import Data.List
 import qualified Data.List.Key as K
-import Data.Map ((!), fromList, fromListWith, adjust, keys, Map)
+import Data.Map ((!), fromList, fromListWith, adjust, keys, Map, notMember)
 import Data.Tuple
 
 import ZTile
@@ -64,11 +64,11 @@ type WTile = (TileId, Weight)
 
 We define a \ct{WTile} type here for weighted tiles, which could perhaps be used by the user of this package.
 The idea is that each tile will have a weight associated with it, and that moving from tile A to tile B will incur a movement cost that is the interpolation between the weight of A and B divided by 2, or some other scheme.
-It is up to the user to decide how to determine the values of the weights between two tiles, and to generate the \ct{[(a, a, Weight)]} list required to feed to \ct{buildGraph}.
+It is up to the user to decide how to determine the values of the weights between two tiles, and to generate the \ct{[(a, a, Int)]} list required to feed to \ct{buildGraph}.
 
 \begin{code}
 buildGraph :: Ord a
-	=> [(a, a, Weight)]
+	=> [(a, a, Int)]
 	-> Either (String, [(a, a)]) (Map a [(a, Weight)])
 buildGraph edges
 	| length es /= length (nub es)
@@ -78,8 +78,7 @@ buildGraph edges
 			( "negative weights detected"
 			, map getEdge $ filter ((<0) . getWeight) edges
 			)
-	| otherwise = Right . fromListWith (++) $ edges
-	>>= (\(a, b, w) -> [(a, [(b, w)]), (b, [(a, w)])])
+	| otherwise = Right . fromListWith (++) $ concatMap (\(a, b, w) -> [(a, [(b, Finite w)]), (b, [])]) edges
 	where
 	getEdge = fstSnd3
 	getWeight = thd3
@@ -134,9 +133,13 @@ That is, \ct{u} is the vertex with the shortest distance to the source that is i
 
 \begin{code}
 shortestPath :: Ord a => a -> a -> Map a [(a, Weight)] -> [a]
-shortestPath source dest graph = reverse $ f dest
+shortestPath source dest graph
+	| source == dest = [] -- ignore self-loops
+	| notMember dest graph = []
+	| Infinity == fst (dijkstra graph source ! dest) = [] -- if dest exists, but is unreachable, return an empty list
+	| otherwise = reverse $ traceBack dest
 	where
-	f x = x : maybe [] f (snd $ dijkstra graph source ! x)
+	traceBack x = x : maybe [] traceBack (snd $ dijkstra graph source ! x)
 \end{code}
 
 To retrieve the shortest path, we simply reverse our direction from the destination.
