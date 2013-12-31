@@ -11,16 +11,22 @@ import Data.Graph.Inductive as GI
 import Data.Graph.Inductive.Example
 import Data.GraphViz
 import Data.List
+import qualified Data.Map.Lazy as M
+import Data.Maybe
 import qualified Data.Text.Lazy as T
 import Data.Tuple
 import qualified Data.Vector as V
+import System.Exit
 import System.Random.MWC as MWC
 import System.Random.MWC.CondensedTable
-import Test.QuickCheck
 
 import ZTile.PathFinding
 import ZTile.Util
+\end{code}
 
+\section{Random Graph Generation}
+
+\begin{code}
 type Vertex = Int
 \end{code}
 
@@ -150,3 +156,49 @@ randFstSnd rng = foldM f []
 \end{code}
 
 \ct{randFstSnd} randomly chooses between either the first or second item in a tuple.
+
+\section{Test Suite}
+
+We now test ZTile's \ct{shortestPath} function, to see if it matches FGL's version.
+Because there can be multiple shortest paths in a graph, we only check to see if the chosen path lengths are the same in \ct{prop_shortestPath}.
+
+\begin{code}
+test :: IO ()
+test = do
+	rng <- createSystemRandom
+	mapM_ (testSP rng) [1..100]
+
+testSP :: Gen (PrimState IO) -> Int -> IO ()
+testSP rng testCase = do
+	g <- randWGraph 10 0.3 [GpNoLoops] rng :: IO (Gr Int Int)
+	when (not $ prop_shortestPath 1 10 g) $ do
+		preview g
+		putStrLn $ "test number: " ++ show testCase
+		putStrLn $ "ztPath: " ++ show (ztPath g)
+		putStrLn $ "fglPath: " ++ show (fglPath g)
+		putStrLn $ "zt's graph: let gr = (\\(Right x) -> x) $ buildGraph " ++ show (labEdges g)
+		putStrLn $ "labEdges g: " ++ show (labEdges g)
+		exitWith $ ExitFailure 1
+	where
+	fglPath = sp 1 10
+	ztPath g = shortestPath 1 10 g'
+		where
+		g' = (\(Right x) -> x) . buildGraph $ labEdges g
+
+prop_shortestPath :: (Ord a, DynGraph g) => Node -> Node -> g a Int -> Bool
+prop_shortestPath a b g
+	| null fglPath && null ztPath = True -- there seems to be a bug in GHC 7.6.3; this condition is here to work around it
+	| otherwise = ztPathCost == fglPathCost
+	where
+	fglPath = sp a b g
+	fglPathCost = Finite $ spLength a b g
+	ztPath = shortestPath a b g'
+	ztPathCost = Finite . sum $ map getEdgeWeight pathEdges
+	getEdgeWeight e = fromJust $ lookup e edges
+		where
+		edges = map (\(a, b, w) -> ((a, b), w)) $ labEdges g
+	pathEdges = zip ztPath $ drop 1 ztPath
+	g' = (\(Right x) -> x) . buildGraph $ labEdges g
+\end{code}
+
+The condition that always returns True if both \ct{fglPath} and \ct{ztPath} are empty is only there to work around a likely bug in GHC 7.6.3, which makes the code here crash with ``Prelude.head: empty list''.
