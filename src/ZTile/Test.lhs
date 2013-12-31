@@ -3,17 +3,13 @@
 \begin{code}
 module ZTile.Test where
 
-import Control.Applicative
 import Control.Monad
 import Control.Monad.Primitive
-import qualified Data.Graph as G
 import Data.Graph.Inductive as GI
-import Data.Graph.Inductive.Example
+import Data.Graph.Inductive.Example (genLNodes)
 import Data.GraphViz
 import Data.List
-import qualified Data.Map.Lazy as M
 import Data.Maybe
-import qualified Data.Text.Lazy as T
 import Data.Tuple
 import qualified Data.Vector as V
 import System.Exit
@@ -51,8 +47,6 @@ randWGraph n p gps rng
 	| p >= 1.0 = prepareGraph =<< mkEdges' n gps rng
 	| otherwise = prepareGraph =<< randInclude rng p =<< mkEdges' n gps rng
 	where
-	e = n^2
-	vs = [1..n]
 	prepareGraph es = return . mkGraph (genLNodes 1 n)
 		=<< mapM addWeight
 		=<< incIdxs es
@@ -195,9 +189,9 @@ prop_shortestPath a b g
 	fglPathCost = Finite $ spLength a b g
 	ztPath = shortestPath a b g'
 	ztPathCost = Finite . sum $ map getEdgeWeight pathEdges
-	getEdgeWeight e = fromJust $ lookup e edges
+	getEdgeWeight e = fromJust $ lookup e edges'
 		where
-		edges = map (\(a, b, w) -> ((a, b), w)) $ labEdges g
+		edges' = map (\(x, y, w) -> ((x, y), w)) $ labEdges g
 	pathEdges = zip ztPath $ drop 1 ztPath
 	g' = (\(Right x) -> x) . buildGraph $ labEdges g
 \end{code}
