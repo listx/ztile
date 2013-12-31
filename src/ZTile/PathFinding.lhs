@@ -66,6 +66,8 @@ We define a \ct{WTile} type here for weighted tiles, which could perhaps be used
 The idea is that each tile will have a weight associated with it, and that moving from tile A to tile B will incur a movement cost that is the interpolation between the weight of A and B divided by 2, or some other scheme.
 It is up to the user to decide how to determine the values of the weights between two tiles, and to generate the \ct{[(a, a, Int)]} list required to feed to \ct{buildGraph}.
 
+\section{Dijkstra's Algorithm}
+
 \begin{code}
 buildGraph :: Ord a
 	=> [(a, a, Int)]

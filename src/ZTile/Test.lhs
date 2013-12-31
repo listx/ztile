@@ -160,7 +160,7 @@ randFstSnd rng = foldM f []
 \section{Test Suite}
 
 We now test ZTile's \ct{shortestPath} function, to see if it matches FGL's version.
-Because there can be multiple shortest paths in a graph, we only check to see if the chosen path lengths are the same in \ct{prop_shortestPath}.
+Because there can be multiple shortest paths in a graph, we only check to see if the chosen path lengths are the same in \ct{prop\_shortestPath}.
 
 \begin{code}
 test :: IO ()
@@ -176,7 +176,8 @@ testSP rng testCase = do
 		putStrLn $ "test number: " ++ show testCase
 		putStrLn $ "ztPath: " ++ show (ztPath g)
 		putStrLn $ "fglPath: " ++ show (fglPath g)
-		putStrLn $ "zt's graph: let gr = (\\(Right x) -> x) $ buildGraph " ++ show (labEdges g)
+		putStrLn $ "zt's graph: let gr = (\\(Right x) -> x) $ buildGraph "
+			++ show (labEdges g)
 		putStrLn $ "labEdges g: " ++ show (labEdges g)
 		exitWith $ ExitFailure 1
 	where
@@ -187,7 +188,7 @@ testSP rng testCase = do
 
 prop_shortestPath :: (Ord a, DynGraph g) => Node -> Node -> g a Int -> Bool
 prop_shortestPath a b g
-	| null fglPath && null ztPath = True -- there seems to be a bug in GHC 7.6.3; this condition is here to work around it
+	| null fglPath && null ztPath = True
 	| otherwise = ztPathCost == fglPathCost
 	where
 	fglPath = sp a b g
