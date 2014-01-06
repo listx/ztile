@@ -1,8 +1,9 @@
 CC = ghc
 CFLAGS = -Wall
+MODULE_MAIN_OBJ = ZTile.o
 MODULES = PathFinding Test Util
 MODULES_OBJS = $(MODULES:%=ZTile/%.o)
-OBJS = $(MODULES_OBJS)
+OBJS = $(MODULES_OBJS) $(MODULE_MAIN_OBJ)
 
 all: $(OBJS) ZTile.o
 	hlint . --report=hlint-report.html --color --hint hlint
