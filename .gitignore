@@ -2,6 +2,12 @@
 *.log
 *.out
 *.pdf
+*.toc
+
+*.hi
+*.o
 
 dist
+doc/watch
 .hsenv
+src/hlint-report.html

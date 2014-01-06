@@ -4,7 +4,7 @@
 module ZTile.Util where
 
 allElem :: Eq a => [a] -> [a] -> Bool
-allElem members clan = and $ map (flip elem clan) members
+allElem members clan = all (flip elem clan) members
 
 fst3 :: (a, b, c) -> a
 fst3 (a, _, _) = a

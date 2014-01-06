@@ -68,8 +68,8 @@ instance Show TileGeom where
 		++ "tgSizeY = " ++ show tgSizeY ++ ",\n"
 		++ "tgTiles =\n" ++ showTileGeom ++ "\n}"
 		where
-		showTileGeom = intercalate "\n" . map showTGRow $ reverse [0..(tgSizeY - 1)]
-		showTGRow yIdx = indent ++ (intersperse ' ' $ map (\_ -> 'x') [0..(tgSizeX - 1)])
+		showTileGeom = intercalate "\n" . map showTGRow $ reverse [1..tgSizeY]
+		showTGRow yIdx = indent ++ intersperse ' ' (map (const 'x') [1..tgSizeX])
 			where
 			indent = if odd yIdx
 				then " "

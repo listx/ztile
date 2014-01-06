@@ -40,7 +40,7 @@ We classify the kind of graph properties we are interested in.
 
 \begin{code}
 randWGraph :: (DynGraph g, PrimMonad m)
-	=> Int -> Double -> [GraphProperty] -> (MWC.Gen (PrimState m)) -> m (g Int Int)
+	=> Int -> Double -> [GraphProperty] -> MWC.Gen (PrimState m) -> m (g Int Int)
 randWGraph n p gps rng
 	| n < 1 = return GI.empty
 	| p <= 0.0 = return $ mkGraph (genLNodes 1 n) []
@@ -70,7 +70,7 @@ The \ct{incIdxs} function simply increments all vertices in the graph by 1, to m
 
 \begin{code}
 mkEdges':: PrimMonad m
-	=> Int -> [GraphProperty] -> (MWC.Gen (PrimState m)) -> m [(Vertex, Vertex)]
+	=> Int -> [GraphProperty] -> MWC.Gen (PrimState m) -> m [(Vertex, Vertex)]
 mkEdges' n gps rng
 	| elem GpDAG gps = return $ edgesDAG n
 	| allElem [GpNoLoops, GpNoBidirs] gps = randFstSnd rng $ edgesSimple n
@@ -82,7 +82,7 @@ edgesAll :: Int -> [(Vertex, Vertex)]
 edgesAll n = [(x, y) | x <- [0..(n - 1)], y <- [0..(n - 1)]]
 
 edgesNoLoops :: Int -> [(Vertex, Vertex)]
-edgesNoLoops = filter (\(x, y) -> x /= y) . edgesAll
+edgesNoLoops = filter (uncurry (/=)) . edgesAll
 
 edgesDAG :: Int -> [(Vertex, Vertex)]
 edgesDAG n = thd3 $ foldl' step ((0, 1), 1, []) [1..(div (n * (n + 1)) 2)]
@@ -133,7 +133,7 @@ randInclude rng p = foldM f []
 	where
 	f acc edge = do
 		theta <- uniform rng
-		return $ if (theta < p)
+		return $ if theta < p
 			then edge:acc
 			else acc
 \end{code}
@@ -146,7 +146,7 @@ randFstSnd rng = foldM f []
 	where
 	f acc pair = do
 		theta <- uniformR ((0, 1) :: (Int, Int)) rng
-		return $ (if (theta == 0) then fst else snd) pair:acc
+		return $ (if theta == 0 then fst else snd) pair:acc
 \end{code}
 
 \ct{randFstSnd} randomly chooses between either the first or second item in a tuple.
@@ -165,7 +165,7 @@ test = do
 testSP :: Gen (PrimState IO) -> Int -> IO ()
 testSP rng testCase = do
 	g <- randWGraph 10 0.3 [GpNoLoops] rng :: IO (Gr Int Int)
-	when (not $ prop_shortestPath 1 10 g) $ do
+	unless (prop_shortestPath 1 10 g) $ do
 		preview g
 		putStrLn $ "test number: " ++ show testCase
 		putStrLn $ "ztPath: " ++ show (ztPath g)

@@ -1,0 +1,5 @@
+-- Use default set of hints
+import "hint" HLint.HLint
+
+ignore "Use infix"
+ignore "Use section"

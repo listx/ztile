@@ -9,8 +9,6 @@ A graph is the collection of vertices and edges; more specifically, for purposes
 The \ct{Data.List.Key} module is from the \ct{utility-ht} package.
 
 \begin{code}
-{-# LANGUAGE RecordWildCards #-}
-
 module ZTile.PathFinding where
 
 import Data.List
@@ -72,7 +70,7 @@ buildGraph :: Ord a
 	-> Either (String, [(a, a)]) (Map a [(a, Weight)])
 buildGraph edges
 	| length es /= length (nub es)
-		= Left ("duplicate edge weight definitions", es \\ (nub es))
+		= Left ("duplicate edge weight definitions", es \\ nub es)
 	| any (<0) ws
 		= Left
 			( "negative weights detected"
