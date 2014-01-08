@@ -18,6 +18,9 @@ library
     , mwc-random >= 0.13.1.0
     , primitive >= 0.5.1.0
     , utility-ht >= 0.0.9
+    , QuickCheck >= 2.6
+    , test-framework >= 0.8.0.3
+    , test-framework-quickcheck2 >= 0.3.0.2
     , vector >= 0.10.9.1
   Exposed-Modules:
     ZTile
