@@ -7,14 +7,16 @@ import Control.Monad
 import Control.Monad.Primitive
 import Data.Graph.Inductive as GI
 import Data.Graph.Inductive.Example (genLNodes)
-import Data.GraphViz
 import Data.List
 import Data.Maybe
 import Data.Tuple
 import qualified Data.Vector as V
-import System.Exit
 import System.Random.MWC as MWC
 import System.Random.MWC.CondensedTable
+import Test.Framework
+import Test.Framework.Providers.QuickCheck2
+import Test.QuickCheck as Q
+import Test.QuickCheck.Monadic as Q
 
 import ZTile.PathFinding
 import ZTile.Util
@@ -157,43 +159,28 @@ We now test ZTile's \ct{shortestPath} function, to see if it matches FGL's versi
 Because there can be multiple shortest paths in a graph, we only check to see if the chosen path lengths are the same in \ct{prop\_shortestPath}.
 
 \begin{code}
-test :: IO ()
-test = do
-	rng <- createSystemRandom
-	mapM_ (testSP rng) [1..100]
+tests :: GenIO -> Test
+tests g = testGroup "Dijkstra"
+	[ testProperty "prop_shortestPath" $ prop_shortestPath g
+	]
 
-testSP :: Gen (PrimState IO) -> Int -> IO ()
-testSP rng testCase = do
-	g <- randWGraph 10 0.3 [GpNoLoops] rng :: IO (Gr Int Int)
-	unless (prop_shortestPath 1 10 g) $ do
-		preview g
-		putStrLn $ "test number: " ++ show testCase
-		putStrLn $ "ztPath: " ++ show (ztPath g)
-		putStrLn $ "fglPath: " ++ show (fglPath g)
-		putStrLn $ "zt's graph: let gr = (\\(Right x) -> x) $ buildGraph "
-			++ show (labEdges g)
-		putStrLn $ "labEdges g: " ++ show (labEdges g)
-		exitWith $ ExitFailure 1
+prop_shortestPath :: GenIO -> Property
+prop_shortestPath rng = monadicIO $ do
+	g <- Q.run $ randWGraph 10 0.3 [GpNoLoops] rng :: PropertyM IO (Gr Int Int)
+	unless (null (fglPath g) && null (ztPath g)) $
+		assert (ztPathCost g == fglPathCost g)
 	where
-	fglPath = sp 1 10
-	ztPath g = shortestPath 1 10 g'
+	(a, b) = (1, 10)
+	fglPath = sp a b
+	fglPathCost = Finite . spLength a b
+	ztPath g = shortestPath a b g'
 		where
 		g' = (\(Right x) -> x) . buildGraph $ labEdges g
-
-prop_shortestPath :: (Ord a, DynGraph g) => Node -> Node -> g a Int -> Bool
-prop_shortestPath a b g
-	| null fglPath && null ztPath = True
-	| otherwise = ztPathCost == fglPathCost
-	where
-	fglPath = sp a b g
-	fglPathCost = Finite $ spLength a b g
-	ztPath = shortestPath a b g'
-	ztPathCost = Finite . sum $ map getEdgeWeight pathEdges
-	getEdgeWeight e = fromJust $ lookup e edges'
+	ztPathCost g = Finite . sum . map (getEdgeWeight g) $ pathEdges g
+	getEdgeWeight g e = fromJust $ lookup e edges'
 		where
 		edges' = map (\(x, y, w) -> ((x, y), w)) $ labEdges g
-	pathEdges = zip ztPath $ drop 1 ztPath
-	g' = (\(Right x) -> x) . buildGraph $ labEdges g
+	pathEdges g = zip (ztPath g) . drop 1 $ ztPath g
 \end{code}
 
-The condition that always returns True if both \ct{fglPath} and \ct{ztPath} are empty is only there to work around a likely bug in GHC 7.6.3, which makes the code here crash with ``Prelude.head: empty list''.
+The condition that always returns without any result if both \ct{fglPath} and \ct{ztPath} are empty is only there to work around a likely bug in GHC 7.6.3, which makes the code here crash with ``Prelude.head: empty list''.

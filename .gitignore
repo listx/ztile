@@ -11,3 +11,4 @@ dist
 doc/watch
 .hsenv
 src/hlint-report.html
+src/ztile-test
