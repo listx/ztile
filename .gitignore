@@ -9,6 +9,7 @@
 
 dist
 doc/watch
+doc/ztile-versioned.tex
 .hsenv
 src/hlint-report.html
 src/ztile-test
