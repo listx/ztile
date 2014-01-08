@@ -17,18 +17,34 @@
 \usepackage{listings}
 \lstloadlanguages{Haskell}
 \lstnewenvironment{code}
-	{\lstset{tabsize=4}%
-		\csname lst@SetFirstLabel\endcsname}
-		{\csname lst@SaveFirstLabel\endcsname}
-	\lstset{
-		basicstyle=\small\ttfamily,
-		frame=single,
-		framexleftmargin=0.5em,
-		framexrightmargin=0.5em,
-		backgroundcolor=\color{LemonChiffon1},
-		showstringspaces=false,
-		flexiblecolumns=false,
-    }
+	{\csname lst@SetFirstLabel\endcsname
+		\lstset{
+			tabsize=4,
+			basicstyle=\small\ttfamily,
+			frame=single,
+			framexleftmargin=0.5em,
+			framexrightmargin=0.5em,
+			backgroundcolor=\color{LemonChiffon1},
+			showstringspaces=false,
+			flexiblecolumns=false,
+		}
+	}
+	{\csname lst@SaveFirstLabel\endcsname}
+
+\lstnewenvironment{console}
+	{\csname lst@SetFirstLabel\endcsname
+		\lstset{
+			tabsize=4,
+			basicstyle=\small\ttfamily,
+			frame=single,
+			framexleftmargin=0.5em,
+			framexrightmargin=0.5em,
+			backgroundcolor=\color{LightCyan2},
+			showstringspaces=false,
+			flexiblecolumns=false,
+		}
+	}
+	{\csname lst@SaveFirstLabel\endcsname}
 
 \renewcommand*\oldstylenums{\addfontfeature{Numbers={OldStyle}}}
 \newcommand*\ct[1]{\texttt{\color{DeepPink3}#1}}
@@ -41,7 +57,7 @@
 % intra-document hyperlinks
 \usepackage[colorlinks,linkcolor=blue]{hyperref}
 \begin{document}
-\title{ZTile Source Manual}
+\title{ZTile Manual}
 \author{Linus Arver\\
 \\
 ver. \href{http://www.github.com/listx/ztile/commit/GIT-COMMIT-HASH}{\texttt{GIT-COMMIT-DESC}}
@@ -49,7 +65,9 @@ ver. \href{http://www.github.com/listx/ztile/commit/GIT-COMMIT-HASH}{\texttt{GIT
 \date{\texttt{GIT-COMMIT-DATE}}
 \maketitle{}
 \tableofcontents{}
+\part{Usage}
 \input{intro.tex}
+\part{Source Code}
 \input{../src/ZTile.lhs}
 \input{../src/ZTile/PathFinding.lhs}
 \input{../src/ZTile/Test.lhs}
