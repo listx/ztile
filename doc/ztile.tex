@@ -22,7 +22,7 @@
 		{\csname lst@SaveFirstLabel\endcsname}
 	\lstset{
 		basicstyle=\small\ttfamily,
-		frame=lines,
+		frame=single,
 		framexleftmargin=0.5em,
 		framexrightmargin=0.5em,
 		backgroundcolor=\color{LemonChiffon1},
@@ -42,8 +42,11 @@
 \usepackage[colorlinks,linkcolor=blue]{hyperref}
 \begin{document}
 \title{ZTile Source Manual}
-\author{Linus Arver}
-\date{\today}
+\author{Linus Arver\\
+\\
+ver. \href{http://www.github.com/listx/ztile/commit/GIT-COMMIT-HASH}{\texttt{GIT-COMMIT-DESC}}
+}
+\date{\texttt{GIT-COMMIT-DATE}}
 \maketitle{}
 \tableofcontents{}
 \input{intro.tex}

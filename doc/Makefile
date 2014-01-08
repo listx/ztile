@@ -1,8 +1,8 @@
-TEXS = $(shell find -type f -regex ".*\.tex")
+TEXS = $(shell find ! -name "ztile-versioned.tex" -type f -regex ".*\.tex")
 SRCS = $(shell find ../src -type f -regex ".*\.lhs")
 
 all: $(TEXS) $(SRCS)
-	xelatex -halt-on-error ztile.tex
+	xelatex -halt-on-error ztile-versioned.tex
 watch: $(TEXS) $(SRCS)
 	rm -f watch
 	for i in $(TEXS) $(SRCS); do \
