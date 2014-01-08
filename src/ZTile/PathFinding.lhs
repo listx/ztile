@@ -76,7 +76,9 @@ buildGraph edges
 			( "negative weights detected"
 			, map getEdge $ filter ((<0) . getWeight) edges
 			)
-	| otherwise = Right . fromListWith (++) $ concatMap (\(a, b, w) -> [(a, [(b, Finite w)]), (b, [])]) edges
+	| otherwise = Right
+		. fromListWith (++)
+		$ concatMap (\(a, b, w) -> [(a, [(b, Finite w)]), (b, [])]) edges
 	where
 	getEdge = fstSnd3
 	getWeight = thd3
@@ -134,7 +136,7 @@ shortestPath :: Ord a => a -> a -> Map a [(a, Weight)] -> [a]
 shortestPath source dest graph
 	| source == dest = [] -- ignore self-loops
 	| notMember dest graph = []
-	| Infinity == fst (dijkstra graph source ! dest) = [] -- if dest exists, but is unreachable, return an empty list
+	| Infinity == fst (dijkstra graph source ! dest) = [] -- dest is unreachable
 	| otherwise = reverse $ traceBack dest
 	where
 	traceBack x = x : maybe [] traceBack (snd $ dijkstra graph source ! x)
