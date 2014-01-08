@@ -6,7 +6,7 @@ MODULES = PathFinding Test Util
 MODULES_OBJS = $(MODULES:%=ZTile/%.o)
 OBJS = $(MODULES_OBJS) $(MODULE_MAIN_OBJ) $(EXEC:%=%.o)
 
-all: $(EXEC) hlint-report.html
+all: $(OBJS) $(EXEC) hlint-report.html
 
 $(OBJS): %.o: %.lhs
 	$(CC) $(CFLAGS) $<
