@@ -189,13 +189,7 @@ flatHexInit x y
 		, tgSizeY = y
 		, tgTiles = buildHexes x y
 		}
-\end{code}
 
-The \ct{flatPlaneInit} function initializes a \ct{TG} based on the given \ct{Plane} and \((x, y)\) size.
-The helper functions \ct{flatSqInit} and \ct{flatHexInit} do the real work.
-The \ct{flatHexInit} function's real work is done with \ct{buildHexes}, which carefully sets each row of hex tiles with the correct \(x\) coordinate.
-
-\begin{code}
 -- E.g., for a size x=4 and y=3, we get:
 --
 --  x x x x		<- row 2, an even row, so we shift the tiles left by 1 unit
@@ -215,7 +209,9 @@ buildHexes xWidth yHeight = snd $ foldl step (0, []) ys
 			else x
 \end{code}
 
-Below are some miscellaneous functions.
+The \ct{flatPlaneInit} function initializes a \ct{TG} based on the given \ct{Plane} and \((x, y)\) size.
+The helper functions \ct{flatSqInit} and \ct{flatHexInit} do the real work.
+The \ct{flatHexInit} function's real work is done with \ct{buildHexes}, which carefully sets each row of hex tiles with the correct \(x\) coordinate.
 
 \begin{code}
 flatSqDefault :: TileGeom
@@ -226,3 +222,6 @@ genTiles p x y = case p of
 	FlatSq -> tgTiles $ flatSqInit x y
 	FlatHex -> tgTiles $ flatHexInit x y
 \end{code}
+
+These are some miscellaneous functions.
+The 19\(\times\)19 size in \ct{flatSqDefault} is an homage to the game of Go.

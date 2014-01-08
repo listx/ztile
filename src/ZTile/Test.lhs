@@ -61,14 +61,18 @@ randWGraph n p gps rng
 
 This is our baseline Erd\H{o}s-Rényi random graph generation algorithm, with some caveats.
 The original algorithm considers every single possible edge in the graph, and adds it into the graph if the random number is less than \(p\).
-Our version in \ct{randWGraph} does not consider every single edge; rather, the output graph depends on the \ct{[GraphProperty]} list passed in as follows:
+The edges considered in our version in \ct{randWGraph} depend on the \ct{[GraphProperty]} list \ct{gps}.
+The \ct{GraphProperty} types are defined as follows:
 \begin{itemize}
-\item GpDAG: all edges point from a smaller vertex to a bigger one, and thus the appearance looks like a DAG (directed acyclic graph);
-\item GpNoLoops: all edges' endpoints point to different vertices (i.e., there is no edge from a vertex back to itself);
-\item GpNoBidirs: if there is an edge \((v_1, v_2)\), then there is no edge \((v_2, v_1)\) (i.e., there can only be 1 edge between any two vertices, if at all).
+\item \ct{GpDAG}: all edges point from a smaller vertex to a bigger one, and thus the appearance looks like a DAG (directed acyclic graph);
+\item \ct{GpNoLoops}: all edges' endpoints point to different vertices (i.e., there is no edge from a vertex back to itself);
+\item \ct{GpNoBidirs}: if there is an edge \((v_1, v_2)\), then there is no edge \((v_2, v_1)\) (i.e., there can only be 1 edge between any two vertices, if at all).
 \end{itemize}
+If the \ct{[GraphProperty]} list is empty, we consider every single possible edge like in the original Erd\H{o}s-Rényi algorithm.
+
 The other parameters to this function are the standard ones -- \ct{n} for the total number of vertices, and \ct{p} for the percentage in which an arbitrary edge will be created.
 The \ct{incIdxs} function simply increments all vertices in the graph by 1, to make it compatible with FGL's vertex indexing scheme, which counts starting from 1, not 0.
+The \ct{table} variable makes it so that there is a greater likelihood to select weights with lower numbers than those with higher numbers, and also, the range of weights is 1 to 10 (as the length of \ct{[0.5,1..5]} is 10).
 
 \begin{code}
 mkEdges':: PrimMonad m
@@ -153,7 +157,7 @@ randFstSnd rng = foldM f []
 
 \ct{randFstSnd} randomly chooses between either the first or second item in a tuple.
 
-\section{Test Suite}
+\section{Tests}
 
 We now test ZTile's \ct{shortestPath} function, to see if it matches FGL's version.
 Because there can be multiple shortest paths in a graph, we only check to see if the chosen path lengths are the same in \ct{prop\_shortestPath}.

@@ -6,7 +6,7 @@ Vertices are the points, or nodes, where we can visit (e.g., cities).
 Edges connect two vertices together (e.g., roads).
 A graph is the collection of vertices and edges; more specifically, for purposes of the \ct{dijkstra} algorithm, it only deals with edges that are non-negative.
 
-The \ct{Data.List.Key} module is from the \ct{utility-ht} package.
+The \ct{Data.List.Key} module is from the \href{http://hackage.haskell.org/package/utility-ht}{utility-ht} package.
 
 \begin{code}
 module ZTile.PathFinding where
@@ -87,7 +87,9 @@ buildGraph edges
 \end{code}
 
 \ct{buildGraph} generates the graph structure we will be working with, where each vertex has a list of neighboring vertices.
-We also first check if the given list of edges makes sense, in that
+It takes a list of directed edges, in the format \((v_1, v_2, w)\); e.g., if it is given an edge \ct{(LA, NY, 1000)}, this is interpreted as an arrow pointing from LA to NY (and *only* in this direction), with a weight of 1000 units.
+
+We also check if the given list of edges makes sense, in that
 	\begin{itemize}
 	\item it does not contain any duplicate edge definitions, and
 	\item it does not contain any negative weights (because Dijkstra's algorithm cannot handle negative weights).
