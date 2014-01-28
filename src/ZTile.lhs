@@ -71,7 +71,7 @@ instance Show TileGeom where
 		showTileGeom = intercalate "\n" . map showTGRow $ reverse [1..tgSizeY]
 		showTGRow yIdx = indent ++ intersperse ' ' (map (const 'x') [1..tgSizeX])
 			where
-			indent = if odd yIdx
+			indent = if even yIdx
 				then " "
 				else ""
 \end{code}
@@ -81,7 +81,10 @@ The \ct{tgPlane} parameter describes which \ct{Plane} type is used.
 The \ct{tgSizeX} and \ct{tgSizeY} parameters state the size, in \(x\) and \(y\) coordinate space, the tiles take up.
 Lastly, the \ct{tgTiles} parameter lists every \ct{Tile} in \ct{TG}.
 
-The custom \ct{Show} instance is there to make \ct{TG}s look easier to the human eye; in particular, the \ct{showTileGeom} function displays the \ct{TG} with basic ASCII-art.
+The custom \ct{Show} instance is there to make \ct{TG}s look easier to the human eyes.
+In particular, the \ct{showTileGeom} function displays the \ct{TG} with basic ASCII-art.
+The rows are first reversed, so that the bottom left tile is \((0, 0)\).
+Also, the rows are shifted every even \(y\) index, so that visually, the \(x\) coordinate stays unchanged as we go up and diagonally to the right (i.e., the coordinates \((0, 0)\), \((0, 1)\), and \((0, 2)\) all lie on the same forward-slash ``/'' diagonal).
 
 \begin{code}
 class ZTile a where
