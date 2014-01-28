@@ -68,8 +68,9 @@ instance Show TileGeom where
 		++ "tgSizeY = " ++ show tgSizeY ++ ",\n"
 		++ "tgTiles =\n" ++ showTileGeom ++ "\n}"
 		where
-		showTileGeom = intercalate "\n" . map showTGRow $ reverse [1..tgSizeY]
-		showTGRow yIdx = indent ++ intersperse ' ' (map (const 'x') [1..tgSizeX])
+		showTileGeom = intercalate "\n" . map (showTGRow tgPlane) $ reverse [1..tgSizeY]
+		showTGRow plane yIdx = (if (plane == FlatHex) then indent else [])
+			++ intersperse ' ' (map (const 'x') [1..tgSizeX])
 			where
 			indent = if even yIdx
 				then " "
