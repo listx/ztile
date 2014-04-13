@@ -45,6 +45,9 @@ instance Num Weight where
 	abs (Finite a) = Finite (abs a)
 	abs _ = Infinity
 
+	negate (Finite a) = Finite (negate a)
+	negate _ = Infinity
+
 	signum (Finite a) = Finite (signum a)
 	signum _ = Infinity
 
