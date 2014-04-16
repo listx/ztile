@@ -13,8 +13,8 @@ import Data.Tuple
 import qualified Data.Vector as V
 import System.Random.MWC as MWC
 import System.Random.MWC.CondensedTable
-import Test.Framework
-import Test.Framework.Providers.QuickCheck2
+import Test.Tasty
+import Test.Tasty.QuickCheck as TQ
 import Test.QuickCheck as Q
 import Test.QuickCheck.Monadic as Q
 
@@ -163,9 +163,9 @@ We now test ZTile's \ct{shortestPath} function, to see if it matches FGL's versi
 Because there can be multiple shortest paths in a graph, we only check to see if the chosen path lengths are the same in \ct{prop\_shortestPath}.
 
 \begin{code}
-tests :: GenIO -> Test
+tests :: GenIO -> TestTree
 tests g = testGroup "Dijkstra"
-	[ testProperty "prop_shortestPath" $ prop_shortestPath g
+	[ TQ.testProperty "prop_shortestPath" $ prop_shortestPath g
 	]
 
 prop_shortestPath :: GenIO -> Property
