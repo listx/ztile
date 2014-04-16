@@ -1,5 +1,5 @@
 name: ztile
-version: 0.1.0
+version: 0.1.0.0
 synopsis: Square and Hex tiles for games.
 license: FreeBSD
 license-file: LICENSE
