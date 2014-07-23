@@ -19,16 +19,16 @@ library
   -- other-modules:
   other-extensions: RecordWildCards
   build-depends:
-      base >=4.7 && <4.8
+      base >=4.7.0.0 && <4.8.0.0
     , containers >=0.5 && <0.6
-    , fgl >=5.4 && <5.5
-    , mwc-random >=0.13 && <0.14
-    , primitive >=0.5 && <0.6
-    , QuickCheck >=2.7 && <2.8
+    , fgl >=5.5 && <5.6
+    , mwc-random >=0.13.1.1 && <0.14
+    , primitive >=0.5.2.1 && <0.6
+    , QuickCheck >=2.7.6 && <2.8
     , tasty >= 0.8.0.4
     , tasty-quickcheck >= 0.8.0.3
     , utility-ht >= 0.0.10
-    , vector >=0.10 && <0.11
+    , vector >=0.10.9.1 && <0.11
   hs-source-dirs: src
   default-language: Haskell2010
 
@@ -36,13 +36,13 @@ executable ztile-test
   main-is: ztile-test.lhs
   hs-source-dirs: src
   build-depends:
-      base >=4.7 && <4.8
+      base >=4.7.0.0 && <4.8.0.0
     , containers >=0.5 && <0.6
-    , fgl >=5.4 && <5.5
-    , mwc-random >=0.13 && <0.14
-    , primitive >=0.5 && <0.6
-    , QuickCheck >=2.7 && <2.8
+    , fgl >=5.5 && <5.6
+    , mwc-random >=0.13.1.1 && <0.14
+    , primitive >=0.5.2.1 && <0.6
+    , QuickCheck >=2.7.6 && <2.8
     , tasty >= 0.8.0.4
     , tasty-quickcheck >= 0.8.0.3
     , utility-ht >= 0.0.10
-    , vector >=0.10 && <0.11
+    , vector >=0.10.9.1 && <0.11
